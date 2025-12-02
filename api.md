@@ -2,6 +2,7 @@
 
 ## Elements
 
+```ts
 Box {
   title?: string,
   value?: string,
@@ -101,16 +102,16 @@ ProgressBar < Box {
   fillChar?: string,
   emptyChar?: string
 }
-
+```
 
 ## Layout declaration
 
 Window is a singleton, OnDraw it will switch if in default console via ansii, if already in another console just redraws
 
-Window.Draw([][]Box); // highest min height takes precedence, than max height then growth row size wise
+`Window.Draw([][]Box);` // highest min height takes precedence, than max height then growth row size wise
 
 ## Releasing the interface
 
 Close will switch back to original term if opened
 
-trapped or Window.close();
+trapped or `Window.close();`
