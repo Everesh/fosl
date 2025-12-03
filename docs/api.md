@@ -106,9 +106,13 @@ ProgressBar < Box {
 
 ## Layout declaration
 
-Window is a singleton, OnDraw it will switch if in default console via ansii, if already in another console just redraws
+Window is a singleton 
 
-`Window.Draw([][]Box);` // highest min height takes precedence, than max height then growth row size wise
+`Window.open();` // Opens the Window and triggers a redraw, bind SIGWINCH
+
+`Window.setLayout(Array<Array<Box>>);` // highest min height takes precedence, than max height then growth row size wise, triggers redraw if opened
+
+`Window.getLayout();` // Returns mutable Boxes
 
 ## Releasing the interface
 
