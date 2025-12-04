@@ -28,13 +28,14 @@ class WindowSingleton {
     };
   }
 
-  setLayout(layout: Array<Array<Box>>): void {
+  setLayout(layout: Array<Array<Box>>): this {
     this.layout = layout;
 
     if (this.opened) this.redraw();
+    return this;
   }
 
-  open(): void {
+  open(): this {
     if (this.opened) throw Error("Window already opened!");
 
     Deno.stdout.writeSync(this.encoder.encode(ANSI.screen.switch));
@@ -44,9 +45,11 @@ class WindowSingleton {
     Deno.addSignalListener("SIGTERM", this.cleanup);
     Deno.addSignalListener("SIGINT", this.cleanup);
     this.redraw();
+
+    return this;
   }
 
-  close(): void {
+  close(): this {
     if (!this.opened) throw Error("Window already closed!");
 
     Deno.stdout.writeSync(this.encoder.encode(ANSI.screen.restore));
@@ -55,6 +58,8 @@ class WindowSingleton {
     Deno.removeSignalListener("SIGWINCH", this.resizeListener);
     Deno.removeSignalListener("SIGTERM", this.cleanup);
     Deno.removeSignalListener("SIGINT", this.cleanup);
+
+    return this;
   }
 
   private cleanup = (): void => {

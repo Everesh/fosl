@@ -106,11 +106,12 @@ ProgressBar < Box {
 
 ## Layout declaration
 
-Window is a singleton 
+Window is a singleton
 
 `Window.open();` // Opens the Window and triggers a redraw, bind SIGWINCH
 
-`Window.setLayout(Array<Array<Box>>);` // highest min height takes precedence, than max height then growth row size wise, triggers redraw if opened
+`Window.setLayout(Array<Array<Box>>);` // highest min height takes precedence,
+than max height then growth row size wise, triggers redraw if opened
 
 ## Releasing the interface
 
