@@ -118,3 +118,18 @@ than max height then growth row size wise, triggers redraw if opened
 Close will switch back to original term if opened
 
 trapped or `Window.close();`
+
+## Waiting for the window to close
+
+if the background logic finishes, but the tui should remain open .await should halt the execution in your code until Window gets closed by a call (or SIGTERM / SIGINT)
+
+`Window.await();`
+
+## Cookbook
+### Create a window with a button that closes it
+```ts
+Window
+  .setLayout([[new Button({ onClick: () => Window.close() })]])
+  .open()
+  .await();
+```

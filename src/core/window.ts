@@ -2,31 +2,29 @@ import { Box } from "../elements/box.ts";
 import { ANSI } from "./ansi.ts";
 
 class WindowSingleton {
-  private layout: Array<Array<Box>>;
-  private opened: boolean;
+  private layout: Array<Array<Box>> = [];
+  private opened = false;
+  private encoder = new TextEncoder();
 
-  private encoder: TextEncoder;
+  private awaitResolver: (() => void) | null = null;
+  private resizeDebounce?: number;
 
-  private resizeListener: () => void;
+  private resizeListener = (): void => {
+    if (this.resizeDebounce !== undefined) {
+      clearTimeout(this.resizeDebounce);
+    }
+    this.resizeDebounce = setTimeout(() => {
+      this.redraw();
+      this.resizeDebounce = undefined;
+    }, 200);
+  };
 
-  constructor() {
-    this.layout = [];
-    this.opened = false;
-
-    this.encoder = new TextEncoder();
-
-    let resizeDebounce: number | undefined;
-    this.resizeListener = () => {
-      if (resizeDebounce !== undefined) {
-        clearTimeout(resizeDebounce);
-      }
-
-      resizeDebounce = setTimeout(() => {
-        this.redraw();
-        resizeDebounce = undefined;
-      }, 200);
-    };
-  }
+  private cleanup = (): void => {
+    if (this.opened) {
+      this.close();
+    }
+    Deno.exit(0);
+  };
 
   setLayout(layout: Array<Array<Box>>): this {
     this.layout = layout;
@@ -36,7 +34,7 @@ class WindowSingleton {
   }
 
   open(): this {
-    if (this.opened) throw Error("Window already opened!");
+    if (this.opened) throw Error("Can't open opened window!");
 
     Deno.stdout.writeSync(this.encoder.encode(ANSI.screen.switch));
     this.opened = true;
@@ -50,7 +48,7 @@ class WindowSingleton {
   }
 
   close(): this {
-    if (!this.opened) throw Error("Window already closed!");
+    if (!this.opened) throw Error("Can't close closed window!");
 
     Deno.stdout.writeSync(this.encoder.encode(ANSI.screen.restore));
     this.opened = false;
@@ -59,15 +57,21 @@ class WindowSingleton {
     Deno.removeSignalListener("SIGTERM", this.cleanup);
     Deno.removeSignalListener("SIGINT", this.cleanup);
 
+    this.awaitResolver?.();
+    this.awaitResolver = null;
+
     return this;
   }
 
-  private cleanup = (): void => {
-    if (this.opened) {
-      this.close();
+  await(): Promise<void> {
+    if (!this.opened) {
+      throw new Error("Can't await closed window!");
     }
-    Deno.exit(0);
-  };
+
+    return new Promise((resolve) => {
+      this.awaitResolver = resolve;
+    });
+  }
 
   private redraw(): void {
     // TODO - link up engine
