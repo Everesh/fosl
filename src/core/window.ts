@@ -41,6 +41,8 @@ class WindowSingleton {
     this.opened = true;
 
     Deno.addSignalListener("SIGWINCH", this.resizeListener);
+    Deno.addSignalListener("SIGTERM", this.cleanup);
+    Deno.addSignalListener("SIGINT", this.cleanup);
     this.redraw();
   }
 
@@ -51,7 +53,16 @@ class WindowSingleton {
     this.opened = false;
 
     Deno.removeSignalListener("SIGWINCH", this.resizeListener);
+    Deno.removeSignalListener("SIGTERM", this.cleanup);
+    Deno.removeSignalListener("SIGINT", this.cleanup);
   }
+
+  private cleanup = (): void => {
+    if (this.opened) {
+      this.close();
+    }
+    Deno.exit(0);
+  };
 
   private redraw(): void {
     // TODO - link up engine
