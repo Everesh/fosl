@@ -34,12 +34,8 @@ class WindowSingleton {
     if (this.opened) this.redraw();
   }
 
-  getLayout(): Array<Array<Box>> {
-    return this.layout;
-  }
-
   open(): void {
-    if (this.opened) throw Error("__FATAL__ Window already opened!");
+    if (this.opened) throw Error("Window already opened!");
 
     Deno.stdout.writeSync(this.encoder.encode(ANSI.screen.switch));
     this.opened = true;
@@ -49,7 +45,7 @@ class WindowSingleton {
   }
 
   close(): void {
-    if (!this.opened) throw Error("__FATAL__ Window already closed!");
+    if (!this.opened) throw Error("Window already closed!");
 
     Deno.stdout.writeSync(this.encoder.encode(ANSI.screen.restore));
     this.opened = false;

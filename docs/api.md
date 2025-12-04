@@ -112,8 +112,6 @@ Window is a singleton
 
 `Window.setLayout(Array<Array<Box>>);` // highest min height takes precedence, than max height then growth row size wise, triggers redraw if opened
 
-`Window.getLayout();` // Returns mutable Boxes
-
 ## Releasing the interface
 
 Close will switch back to original term if opened
