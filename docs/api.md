@@ -110,8 +110,7 @@ Window is a singleton
 
 `Window.open();` // Opens the Window and triggers a redraw, bind SIGWINCH
 
-`Window.setLayout(Array<Array<Box>>);` // highest min height takes precedence,
-than max height then growth row size wise, triggers redraw if opened
+`Window.setLayout(Frame | Box);` Box fills in the space, frame is a collection of Boxes with flexbox like params
 
 ## Releasing the interface
 
@@ -128,8 +127,8 @@ if the background logic finishes, but the tui should remain open .await should h
 ## Cookbook
 ### Create a window with a button that closes it
 ```ts
-Window
-  .setLayout([[new Button({ onClick: () => Window.close() })]])
+await Window
+  .setLayout(new Button({ onClick: () => Window.close() }))
   .open()
   .await();
 ```

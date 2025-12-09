@@ -1,5 +1,6 @@
-import { Box } from "../elements/box.ts";
-import { ANSI } from "./ansi.ts";
+import Box from "../elements/box.ts";
+import ANSI from "./ansi.ts";
+import Engine from './engine.ts';
 
 class WindowSingleton {
   private layout: Array<Array<Box>> = [];
@@ -14,7 +15,7 @@ class WindowSingleton {
       clearTimeout(this.resizeDebounce);
     }
     this.resizeDebounce = setTimeout(() => {
-      this.redraw();
+      Engine.render();
       this.resizeDebounce = undefined;
     }, 200);
   };
@@ -29,7 +30,7 @@ class WindowSingleton {
   setLayout(layout: Array<Array<Box>>): this {
     this.layout = layout;
 
-    if (this.opened) this.redraw();
+    if (this.opened) Engine.render();
     return this;
   }
 
@@ -42,7 +43,7 @@ class WindowSingleton {
     Deno.addSignalListener("SIGWINCH", this.resizeListener);
     Deno.addSignalListener("SIGTERM", this.cleanup);
     Deno.addSignalListener("SIGINT", this.cleanup);
-    this.redraw();
+    Engine.render();
 
     return this;
   }
@@ -72,11 +73,6 @@ class WindowSingleton {
       this.awaitResolver = resolve;
     });
   }
-
-  private redraw(): void {
-    // TODO - link up engine
-    console.log("ping\n");
-  }
 }
 
-export const Window = new WindowSingleton();
+export default const Window = new WindowSingleton();
